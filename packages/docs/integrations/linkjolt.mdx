@@ -236,11 +236,10 @@ transaction, so webhook retries and manual resends don't count twice.
 
 ## Refunds and chargebacks
 
-Creem's `refund.created` event carries `refund_amount`, the amount of this refund, and the
-transaction's `refunded_amount`, the total refunded so far including this one. LinkJolt reverses the
-commission in proportion to the refund, and a full refund or a chargeback removes it. A redelivered
-or out-of-order event doesn't reverse anything twice, and a payout still queued for the sale is
-reduced or cancelled to match.
+Creem's `refund.created` event carries `refund_amount`, the amount of that refund. LinkJolt reverses
+the commission in proportion to what has been refunded, and a full refund or a chargeback removes it.
+A redelivered or out-of-order event doesn't reverse anything twice, and a payout still queued for the
+sale is reduced or cancelled to match.
 
 Every commission stays pending until you approve it, so a refund that arrives first adjusts it before
 anything is paid. If you've already paid the commission, LinkJolt records the refund but doesn't take
@@ -249,14 +248,18 @@ money back from the affiliate. Settle that with them directly.
 ## Good to Know
 
 - **The daily check.** Once a day LinkJolt reads its webhook with your key. If the webhook was
-  deleted or the key revoked, the Creem tab says what's wrong and LinkJolt emails you once.
+  switched off, changed or deleted, or the key revoked, the Creem tab says what's wrong and LinkJolt
+  emails you once. LinkJolt never changes the webhook by itself: if you switched it off, it stays
+  off until you click **Turn it back on** on the Creem tab.
 - **Short links and storefronts.** The script adds the referral to full payment links and product
   links on your own site. It can't reach a Creem short link (`l.creem.io`) or a
   [storefront](/features/storefronts) page, so link to the payment link itself where affiliates send
   traffic, or give those affiliates a discount code.
 - **Custom domains.** With a [custom domain](/features/custom-domains), new payment links point at
-  your subdomain (for example `pay.yourbrand.com`) instead of `creem.io`, and the script doesn't
-  rewrite them. Add `metadata[linkjolt_ref]` yourself, as in the third tab of the checkout step.
+  your subdomain (for example `pay.yourbrand.com`) instead of `creem.io`. Add
+  `&creem_domain=pay.yourbrand.com` to the tracking script's URL and the script adds the referral to
+  links on that domain too. If you connected with an API key, LinkJolt finds the domain in your
+  products and the Creem tab shows the script with it filled in.
 - **One Creem store per LinkJolt brand.** LinkJolt refuses a store that's already connected to
   another brand until you disconnect it there.
 - **Disconnecting.** Click **Disconnect Creem** on the Creem tab. LinkJolt removes its webhook from
